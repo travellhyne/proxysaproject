@@ -1,0 +1,10 @@
+{
+  "name": "PitstopProxy",
+  "version": "0.0.1",
+  "description": "Local proxy server for Pitstop",
+  "repository": "github.com/travellhyne/proxysaproject",
+  "dependencies": {
+    "express": "~3.4.7",
+    "http-proxy": "~0.10.4"
+  }
+}
