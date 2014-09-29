@@ -1,35 +1,24 @@
-var express = require('express')
-    , httpProxy = require('http-proxy')
-    , path = require('path');
-		
-var proxy = new httpProxy.RoutingProxy();
- 
-var proxyOptions = {
-	host: 'pitstop.dilimanlabs.com',
-	port: 80
-};
- 
-var app = express();
- 
-var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'X-Requested-With, Accept, Origin, Referer, User-Agent, Content-Type, Authorization');
+var express = require("express"),
+    request = require("request"),
+    morgan = require("morgan");
 
-    if ('OPTIONS' == req.method) {
-      res.send(200);
-    } else {
-      next();
-    }
-};
- 
-app.configure(function() {
-    app.use(express.static(path.join(__dirname, 'public')));
-    app.use(allowCrossDomain);
+var app = express();
+var logger = morgan("combined");
+app.use(logger);
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
 });
- 
-app.all('/*',  function (req, res) {
-    return proxy.proxyRequest(req, res, proxyOptions);
+
+app.post('/*', function (req, res) {
+    req.pipe(request.post("http://pitstop.dilimanlabs.com"+req.url, {form: req.body})).pipe(res);
 });
- 
-app.listen(3333);
+
+app.get('/*', function (req, res) {
+    req.pipe(request.post("http://pitstop.dilimanlabs.com"+req.url)).pipe(res);
+});
+
+app.listen(5050);
+
+console.log("Magic happens at 5050...");
