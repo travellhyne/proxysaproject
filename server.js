@@ -6,8 +6,9 @@ var app = express();
 var logger = morgan("combined");
 app.use(logger);
 app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', '*');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With');
     next();
 });
 
@@ -16,7 +17,7 @@ app.post('/*', function (req, res) {
 });
 
 app.get('/*', function (req, res) {
-    req.pipe(request.post("http://pitstop.dilimanlabs.com"+req.url)).pipe(res);
+    req.pipe(request.get("http://pitstop.dilimanlabs.com"+req.url)).pipe(res);
 });
 
 app.listen(5050);
